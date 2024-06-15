@@ -12,9 +12,9 @@ import {
   useNavigation,
   useRouteLoaderData,
 } from "react-router-dom";
-import { fakeAuthProvider } from "./auth";
+import { AuthProvider } from "./auth";
 
-import Login from './Pages/Login'
+import Login from './Pages/LoginPage'
 import PublicPage from './Pages/PublicPage'
 import ProtectedPage from './Pages/ProtectedPage'
 
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
     path: "/",
     loader() {
       // Our root route always provides the user, if logged in
-      return { user: fakeAuthProvider.username };
+      return { user: AuthProvider.username };
     },
     Component: Layout,
     children: [
@@ -49,7 +49,7 @@ const router = createBrowserRouter([
     path: "/logout",
     async action() {
       // We signout in a "resource route" that we can hit from a fetcher.Form
-      await fakeAuthProvider.signout();
+      await AuthProvider.signout();
       return redirect("/");
     },
   },
@@ -137,7 +137,7 @@ async function loginAction({ request }: LoaderFunctionArgs) {
 
   // Sign in and redirect to the proper destination if successful.
   try {
-    await fakeAuthProvider.signin(username);
+    await AuthProvider.signin(username);
   } catch (error) {
     // Unused as of now but this is how you would handle invalid
     // username/password combinations - just like validating the inputs
@@ -152,7 +152,7 @@ async function loginAction({ request }: LoaderFunctionArgs) {
 }
 
 async function loginLoader() {
-  if (fakeAuthProvider.isAuthenticated) {
+  if (AuthProvider.isAuthenticated) {
     return redirect("/");
   }
   return null;
@@ -162,7 +162,7 @@ function protectedLoader({ request }: LoaderFunctionArgs) {
   // If the user is not logged in and tries to access `/protected`, we redirect
   // them to `/login` with a `from` parameter that allows login to redirect back
   // to this page upon successful authentication
-  if (!fakeAuthProvider.isAuthenticated) {
+  if (!AuthProvider.isAuthenticated) {
     let params = new URLSearchParams();
     params.set("from", new URL(request.url).pathname);
     return redirect("/login?" + params.toString());
