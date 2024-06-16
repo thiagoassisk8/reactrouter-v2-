@@ -8,7 +8,7 @@
 */
 
 const API_CONFIG = {
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'https://nurse-assistant.onrender.com',
 }
 
 export const AuthProvider = {
